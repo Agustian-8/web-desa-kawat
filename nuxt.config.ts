@@ -5,6 +5,25 @@ export default defineNuxtConfig({
     '@vueuse/motion/nuxt',
     '@nuxtjs/supabase'
   ],
+  
+  // Konfigurasi proteksi rute Supabase
+  supabase: {
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      // Daftar halaman publik yang dibebaskan dari kewajiban login
+      exclude: [
+        '/',                  
+        '/profil',            
+        '/layanan',           
+        '/berita',            
+        '/berita-detail',     
+        '/transparansi',      
+        '/pengajuan-layanan'  
+      ],
+    }
+  },
+
   app: {
     head: {
       link: [
