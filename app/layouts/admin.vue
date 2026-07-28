@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-slate-100 flex font-['Poppins']">
-    <!-- Sidebar -->
+    <!-- Sidebar Admin -->
     <AdminSidebar />
     
     <!-- Main Content -->
@@ -13,11 +13,12 @@
 <script setup>
 import AdminSidebar from '~/components/AdminSidebar.vue'
 
-// Proteksi semua halaman admin
+// ✅ PROTEKSI KHUSUS UNTUK HALAMAN ADMIN
 const user = useSupabaseUser()
 const router = useRouter()
 
 onMounted(() => {
+  // Jika user tidak login, redirect ke halaman login
   if (!user.value) {
     router.push('/login')
   }

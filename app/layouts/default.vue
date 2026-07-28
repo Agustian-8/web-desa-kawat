@@ -1,14 +1,17 @@
 <template>
   <div class="min-h-screen flex flex-col font-['Poppins'] bg-slate-50">
-    <!-- Panggil Komponen Navbar -->
+    <!-- Navbar -->
     <Navbar />
 
-    <!-- KONTEN HALAMAN DINAMIS AKAN MUNCUL DI SINI -->
+    <!-- Konten Halaman -->
     <main class="flex-grow pt-20">
       <slot />
     </main>
 
-    <!-- Panggil Komponen Footer -->
+    <!-- Footer -->
     <Footer />
   </div>
 </template>
+
+<script setup>
+</script>
