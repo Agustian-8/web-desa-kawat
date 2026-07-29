@@ -7,7 +7,7 @@
       </div>
       <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100">
         <div class="text-right hidden sm:block">
-          <h4 class="font-bold text-sm text-gray-800 leading-tight">Admin Desa</h4>
+          <h4 class="font-bold text-sm text-gray-800 leading-tight">Irfan Maftuh</h4>
           <span class="text-[11px] text-emerald-600 font-bold uppercase tracking-wider">Administrator</span>
         </div>
         <div class="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center font-bold text-sm border-2 border-emerald-500 shadow-sm">

@@ -5,7 +5,7 @@
       <!-- Gambar Latar Belakang -->
       <div class="absolute inset-0 bg-[url('/bg-desa.png')] bg-cover bg-center bg-no-repeat"></div>
       
-      <!-- Overlay Gelap (Sedikit dikurangi dari 70 ke 60 agar gambar lebih terlihat) -->
+      <!-- Overlay Gelap -->
       <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"></div>
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -48,7 +48,7 @@
             Selamat datang di website resmi Desa Kawat. Kami hadir untuk memberikan pelayanan publik yang transparan, inovatif, dan mudah diakses oleh seluruh masyarakat.
           </p>
 
-          <!-- Tombol Aksi (Efek Hover Dinamis) -->
+          <!-- Tombol Aksi -->
           <div 
             v-motion
             :initial="{ opacity: 0, y: 30 }"
@@ -66,11 +66,13 @@
         </div>
       </div>
       
-      <!-- Gradasi transisi BAWAH diperkecil (h-12) agar tidak memakan gambar -->
+      <!-- Gradasi transisi BAWAH -->
       <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-50 to-transparent z-10 pointer-events-none"></div>
     </section>
 
-    <!-- SECTION STATISTIK (Desain Kartu Terpisah Modern & Aesthetic) -->
+    <!-- ============================================ -->
+    <!-- SECTION STATISTIK (DINAMIS DARI DATABASE)    -->
+    <!-- ============================================ -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20 pb-16">
       <div 
         v-motion
@@ -78,30 +80,30 @@
         :visible="{ opacity: 1, y: 0, transition: { duration: 800 } }"
         class="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
-        <!-- Card Statistik 1 -->
+        <!-- Card Statistik 1: Total Penduduk -->
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center group hover:-translate-y-2 transition-transform duration-300">
           <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           </div>
-          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">2.450</h3>
+          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">{{ statistik.total_penduduk }}</h3>
           <p class="text-xs font-semibold text-slate-400 tracking-widest uppercase mt-1">Total Penduduk</p>
         </div>
 
-        <!-- Card Statistik 2 -->
+        <!-- Card Statistik 2: Total Dusun -->
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center group hover:-translate-y-2 transition-transform duration-300">
           <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-teal-600 group-hover:text-white transition-all duration-300">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
           </div>
-          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">4</h3>
+          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">{{ statistik.total_dusun }}</h3>
           <p class="text-xs font-semibold text-slate-400 tracking-widest uppercase mt-1">Dusun Terintegrasi</p>
         </div>
 
-        <!-- Card Statistik 3 -->
+        <!-- Card Statistik 3: Total Layanan -->
         <div class="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center group hover:-translate-y-2 transition-transform duration-300">
           <div class="w-14 h-14 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-cyan-600 group-hover:text-white transition-all duration-300">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
           </div>
-          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">9</h3>
+          <h3 class="text-4xl font-extrabold text-slate-800 mb-1">{{ statistik.total_layanan }}</h3>
           <p class="text-xs font-semibold text-slate-400 tracking-widest uppercase mt-1">Layanan Digital</p>
         </div>
       </div>
@@ -177,6 +179,7 @@
 
       </div>
     </section>
+
     <!-- SECTION LOKASI & PETA DESA -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-20">
       <div 
@@ -223,12 +226,9 @@
           </div>
         </div>
 
-        <!-- Google Maps Iframe (Aesthetic Container) -->
+        <!-- Google Maps Iframe -->
         <div class="w-full lg:w-2/3 h-[400px] rounded-3xl overflow-hidden shadow-inner border border-gray-100 bg-slate-100 relative group">
-           <!-- Placeholder Skeleton saat map masih meload -->
            <div class="absolute inset-0 bg-slate-200 animate-pulse -z-10"></div>
-           
-           <!-- Link embed Google Maps mengarah ke Desa Kawat, Tayan Hilir -->
            <iframe 
              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3330.041180087307!2d110.04239127496453!3d-0.07015309992915265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e029d1e2c3b6f45%3A0xcbb8ef9e122fc054!2sKantor%20Desa%20Kawat!5e1!3m2!1sen!2sid!4v1784885868814!5m2!1sen!2sid"
              width="100%" 
@@ -244,3 +244,81 @@
     </section>
   </div>
 </template>
+
+<script setup>
+const supabase = useSupabaseClient()
+
+// ============================================
+// STATE STATISTIK
+// ============================================
+const statistik = ref({
+  total_penduduk: '2.450',
+  total_dusun: '4',
+  total_layanan: '9'
+})
+
+// ============================================
+// LOAD STATISTIK DARI DATABASE
+// ============================================
+const loadStatistik = async () => {
+  try {
+    // Coba ambil dari Supabase
+    const { data, error } = await supabase
+      .from('pengaturan')
+      .select('*')
+
+    if (!error && data && data.length > 0) {
+      data.forEach(item => {
+        if (item.key === 'total_penduduk') statistik.value.total_penduduk = item.value
+        if (item.key === 'total_dusun') statistik.value.total_dusun = item.value
+        if (item.key === 'total_layanan') statistik.value.total_layanan = item.value
+      })
+      
+      // Simpan ke localStorage sebagai cache
+      if (process.client) {
+        localStorage.setItem('pengaturan_statistik', JSON.stringify(statistik.value))
+      }
+    } else {
+      // Jika gagal, ambil dari localStorage
+      if (process.client) {
+        const saved = localStorage.getItem('pengaturan_statistik')
+        if (saved) {
+          try {
+            statistik.value = JSON.parse(saved)
+          } catch (e) {
+            console.error('Gagal load statistik dari localStorage:', e)
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error loading statistik:', error)
+    // Fallback ke localStorage
+    if (process.client) {
+      const saved = localStorage.getItem('pengaturan_statistik')
+      if (saved) {
+        try {
+          statistik.value = JSON.parse(saved)
+        } catch (e) {
+          console.error('Gagal load statistik dari localStorage:', e)
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// LOAD DATA
+// ============================================
+await loadStatistik()
+</script>
+
+<style scoped>
+@keyframes ping {
+  0% { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+</style>

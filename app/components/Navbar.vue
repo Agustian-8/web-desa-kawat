@@ -12,7 +12,7 @@
           </div>
         </NuxtLink>
 
-        <!-- BAGIAN TENGAH: Menu Navigasi (Hanya tampil di Desktop) -->
+        <!-- BAGIAN TENGAH: Menu Navigasi (Desktop) -->
         <div class="hidden md:flex items-center gap-6 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max">
           <NuxtLink to="/" class="group relative text-sm font-medium py-1 transition-colors" :class="$route.path === '/' ? 'text-emerald-600' : 'text-gray-700 hover:text-emerald-600'">
             Beranda
@@ -36,22 +36,35 @@
           </NuxtLink>
         </div>
 
-        <!-- BAGIAN KANAN: Tombol Aksi & Hamburger -->
+        <!-- BAGIAN KANAN: Tombol Aksi -->
         <div class="flex items-center gap-3 relative z-20">
           
-          <!-- Tombol Hubungi Kami (Hanya Desktop) -->
-          <div class="hidden md:flex items-center gap-2">
-            <a href="https://wa.me/6282252444924" target="_blank" rel="noopener noreferrer" class="px-5 py-2 text-sm font-semibold text-emerald-600 border border-emerald-200 rounded-full hover:bg-emerald-50 transition-colors">
-              Hubungi Kami
-            </a>
-            <a href="https://wa.me/6282252444924" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-10 h-10 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors shadow-sm hover:shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10" />
-              </svg>
-            </a>
-          </div>
+          <!-- ⭐ MENU TRACKING (Desktop) -->
+          <NuxtLink 
+            to="/tracking" 
+            class="hidden md:flex items-center gap-1.5 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full text-sm font-medium hover:bg-emerald-100 transition-colors border border-emerald-200"
+            :class="$route.path === '/tracking' ? 'bg-emerald-600 text-white border-emerald-600' : ''"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Tracking
+          </NuxtLink>
+          
+          <!-- ⭐ TOMBOL HUBUNGI KAMI (GABUNGAN) - Desktop -->
+          <a 
+            href="https://wa.me/6282252444924" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="hidden md:flex items-center gap-2 px-5 py-2 bg-emerald-600 text-white rounded-full text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm hover:shadow-md"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            </svg>
+            Hubungi Kami
+          </a>
 
-          <!-- TOMBOL HAMBURGER (Hanya HP) -->
+          <!-- TOMBOL HAMBURGER (HP) -->
           <button @click="toggleMenu" class="md:hidden p-2 -mr-2 text-gray-600 hover:text-emerald-600 focus:outline-none transition-colors">
             <svg v-if="!isMenuOpen" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -65,7 +78,7 @@
       </div>
     </div>
 
-    <!-- MENU DROPDOWN UNTUK HP -->
+    <!-- MENU DROPDOWN HP -->
     <transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="transform -translate-y-4 opacity-0"
@@ -81,11 +94,24 @@
         <NuxtLink to="/berita" @click="isMenuOpen = false" class="px-4 py-3 rounded-xl font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" :class="$route.path === '/berita' ? 'bg-emerald-50 text-emerald-600' : ''">Berita</NuxtLink>
         <NuxtLink to="/transparansi" @click="isMenuOpen = false" class="px-4 py-3 rounded-xl font-medium text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 transition-colors" :class="$route.path === '/transparansi' ? 'bg-emerald-50 text-emerald-600' : ''">Transparansi</NuxtLink>
         
+        <!-- ⭐ MENU TRACKING DI HP -->
+        <NuxtLink to="/tracking" @click="isMenuOpen = false" class="px-4 py-3 rounded-xl font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors flex items-center gap-2" :class="$route.path === '/tracking' ? 'bg-emerald-600 text-white' : ''">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          Tracking Pengajuan
+        </NuxtLink>
+        
         <div class="border-t border-gray-100 my-2"></div>
         
-        <a href="https://wa.me/6282252444924" target="_blank" class="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3.5 rounded-xl font-semibold shadow-md hover:bg-emerald-700 active:scale-95 transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M7 7h10v10" />
+        <!-- ⭐ TOMBOL HUBUNGI KAMI DI HP -->
+        <a 
+          href="https://wa.me/6282252444924" 
+          target="_blank" 
+          class="flex items-center justify-center gap-2 bg-emerald-600 text-white py-3.5 rounded-xl font-semibold shadow-md hover:bg-emerald-700 active:scale-95 transition-all"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
           </svg>
           Hubungi Admin
         </a>
@@ -97,10 +123,8 @@
 <script setup>
 import { ref } from 'vue'
 
-// State untuk melacak apakah menu HP sedang terbuka atau tertutup
 const isMenuOpen = ref(false)
 
-// Fungsi untuk membuka/menutup menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }

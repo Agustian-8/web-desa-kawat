@@ -1,16 +1,12 @@
 <template>
   <div class="bg-slate-50 min-h-screen pb-24 font-['Poppins']">
     
-    <!-- HERO SECTION (Dengan Latar Belakang Gambar & Transisi Halus) -->
+    <!-- HERO SECTION -->
     <section class="relative bg-slate-900 pt-32 pb-40 lg:pt-40 lg:pb-48 overflow-hidden">
-      <!-- Background Image -->
       <div class="absolute inset-0 bg-[url('/bg-desa.png')] bg-cover bg-center bg-no-repeat"></div>
-      
-      <!-- Overlay Gradient untuk teks yang jelas & transisi halus ke bawah -->
       <div class="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-50 backdrop-blur-sm"></div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <!-- Badge Status -->
         <div 
           v-motion
           :initial="{ opacity: 0, y: 20 }"
@@ -111,7 +107,9 @@
       </div>
     </section>
 
-    <!-- CARA KERJA (Modern Timeline Style) -->
+    <!-- ============================================ -->
+    <!-- CARA KERJA (Steps 1-4)                       -->
+    <!-- ============================================ -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
       <div class="text-center mb-16">
         <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Bagaimana Cara Kerjanya?</h2>
@@ -119,7 +117,6 @@
       </div>
 
       <div class="relative">
-        <!-- Connecting Dashed Line (Background) -->
         <div class="hidden md:block absolute top-12 left-[10%] right-[10%] h-[2px] border-t-2 border-dashed border-emerald-200 -z-10"></div>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-6 text-center">
@@ -131,17 +128,94 @@
             :visible="{ opacity: 1, y: 0, transition: { duration: 500, delay: index * 150 } }"
             class="relative group"
           >
-            <!-- Circular Step Indicator -->
             <div class="w-20 h-20 bg-white text-emerald-600 rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6 border-4 border-emerald-50 shadow-xl shadow-emerald-900/5 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
               {{ index + 1 }}
             </div>
             
-            <!-- Step Content -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 group-hover:shadow-md transition-shadow duration-300">
               <h3 class="text-lg font-bold text-gray-900 mb-3">{{ step.title }}</h3>
               <p class="text-sm text-gray-500 leading-relaxed">{{ step.desc }}</p>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- ⭐ TRACKING LAYANAN (Step 5)                  -->
+    <!-- ============================================ -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-3xl p-8 md:p-12 shadow-2xl shadow-emerald-600/20">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <!-- Kiri: Icon & Teks -->
+          <div class="flex items-center gap-5">
+            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-white text-2xl font-bold">
+                Sudah Mengajukan?
+              </h3>
+              <p class="text-emerald-100 text-sm md:text-base">
+                Cek status pengajuan Anda sekarang juga
+              </p>
+            </div>
+          </div>
+
+          <!-- Kanan: Form Cek Status -->
+          <div class="w-full md:w-auto flex-1 max-w-md">
+            <div class="flex gap-3">
+              <input 
+                v-model="trackingNomor" 
+                type="text" 
+                placeholder="Masukkan nomor pengajuan..."
+                class="flex-1 px-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-white focus:outline-none bg-white/90 backdrop-blur-sm placeholder-gray-400 text-gray-900"
+                @keyup.enter="goToTracking"
+              >
+              <button 
+                @click="goToTracking"
+                class="px-5 py-3 bg-white text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition shadow-lg flex items-center gap-2 whitespace-nowrap"
+              >
+                Cek
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </button>
+            </div>
+            <p class="text-emerald-100 text-xs mt-2">
+              Contoh: P202601290001
+            </p>
+          </div>
+        </div>
+
+        <!-- Info Tambahan -->
+        <div class="mt-6 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-sm text-emerald-100">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2 h-2 bg-emerald-300 rounded-full"></span>
+              Menunggu
+            </span>
+            <span class="inline-flex items-center gap-1 ml-3">
+              <span class="w-2 h-2 bg-blue-300 rounded-full"></span>
+              Diproses
+            </span>
+            <span class="inline-flex items-center gap-1 ml-3">
+              <span class="w-2 h-2 bg-green-300 rounded-full"></span>
+              Selesai
+            </span>
+            <span class="inline-flex items-center gap-1 ml-3">
+              <span class="w-2 h-2 bg-red-300 rounded-full"></span>
+              Ditolak
+            </span>
+          </div>
+          <NuxtLink to="/tracking" class="text-white font-medium hover:underline flex items-center gap-1">
+            Lihat semua status
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -153,11 +227,16 @@
 const supabase = useSupabaseClient()
 const router = useRouter()
 
-// State
+// ============================================
+// STATE
+// ============================================
 const pending = ref(true)
 const layananList = ref([])
+const trackingNomor = ref('')
 
-// Steps Data
+// ============================================
+// STEPS DATA
+// ============================================
 const steps = [
   { title: "Pilih Layanan", desc: "Temukan jenis surat atau dokumen yang ingin Anda urus dari daftar layanan di atas." },
   { title: "Isi Formulir", desc: "Lengkapi data diri dan unggah foto/dokumen pendukung (KTP/KK) secara online." },
@@ -165,7 +244,9 @@ const steps = [
   { title: "Selesai", desc: "Surat telah ditandatangani digital dan siap diunduh atau diambil di balai desa." }
 ]
 
-// Estetika Warna yang Diperbarui (Lebih Premium)
+// ============================================
+// ESTETIKA WARNA
+// ============================================
 const colorMap = {
   blue: {
     bg: 'hover:border-blue-200',
@@ -211,7 +292,6 @@ const colorMap = {
   }
 }
 
-// Get styles based on warna
 const getCardBg = (index) => {
   const warna = layananList.value[index]?.warna || 'blue'
   return colorMap[warna]?.bg || 'hover:border-gray-200'
@@ -223,7 +303,7 @@ const getIconBg = (index) => {
 }
 
 const getIconColor = (index) => {
-  return '' // Dikosongkan karena warna di-handle oleh getIconBg untuk estetika baru
+  return ''
 }
 
 const getDotColor = (index) => {
@@ -236,7 +316,20 @@ const getButtonClass = (index) => {
   return colorMap[warna]?.button || 'bg-gray-50 text-gray-700 border-gray-100 hover:bg-gray-600 hover:text-white'
 }
 
-// Load layanan dari Supabase
+// ============================================
+// FUNGSI KE TRACKING
+// ============================================
+const goToTracking = () => {
+  if (trackingNomor.value.trim()) {
+    router.push(`/tracking?nomor=${trackingNomor.value.trim()}`)
+  } else {
+    router.push('/tracking')
+  }
+}
+
+// ============================================
+// LOAD LAYANAN
+// ============================================
 const loadLayanan = async () => {
   pending.value = true
   try {
@@ -248,11 +341,15 @@ const loadLayanan = async () => {
     if (error) {
       console.error('Error fetching layanan from Supabase:', error)
       loadFromLocalStorage()
+      pending.value = false
       return
     }
 
     if (data && data.length > 0) {
       layananList.value = data
+      if (process.client) {
+        localStorage.setItem('layanan_desa', JSON.stringify(data))
+      }
     } else {
       loadFromLocalStorage()
     }
@@ -263,32 +360,27 @@ const loadLayanan = async () => {
   pending.value = false
 }
 
-// Load dari localStorage (fallback)
 const loadFromLocalStorage = () => {
   if (process.client) {
     const saved = localStorage.getItem('layanan_desa')
     if (saved) {
       try {
         layananList.value = JSON.parse(saved)
+        return
       } catch (e) {
         console.error('Gagal load layanan dari localStorage:', e)
-        setDefaultLayanan()
       }
-    } else {
-      setDefaultLayanan()
     }
-  } else {
-    setDefaultLayanan()
   }
+  setDefaultLayanan()
 }
 
-// Set default layanan
 const setDefaultLayanan = () => {
   layananList.value = [
     {
       id: 1,
       nama: 'Administrasi Warga',
-      deskripsi: 'Layanan administrasi kependudukan',
+      deskripsi: 'Layanan administrasi kependudukan untuk warga desa',
       items: ['Pengantar KTP / KK', 'Pengantar Akta Kelahiran', 'Surat Keterangan Domisili'],
       warna: 'blue',
       icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
@@ -296,7 +388,7 @@ const setDefaultLayanan = () => {
     {
       id: 2,
       nama: 'Perizinan & Usaha',
-      deskripsi: 'Perizinan usaha mikro dan kegiatan',
+      deskripsi: 'Layanan perizinan untuk usaha mikro dan kegiatan',
       items: ['Surat Izin Usaha Mikro (IUMK)', 'Izin Keramaian', 'Keterangan Tidak Mampu (SKTM)'],
       warna: 'amber',
       icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
@@ -304,7 +396,7 @@ const setDefaultLayanan = () => {
     {
       id: 3,
       nama: 'Pusat Pelaporan',
-      deskripsi: 'Aduan masyarakat untuk perbaikan',
+      deskripsi: 'Laporan dan aduan masyarakat untuk perbaikan desa',
       items: ['Lapor Fasilitas Rusak', 'Aduan Keamanan & Ketertiban', 'Kotak Saran Kepala Desa'],
       warna: 'rose',
       icon: 'M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z'
@@ -312,7 +404,6 @@ const setDefaultLayanan = () => {
   ]
 }
 
-// Navigasi ke form pengajuan
 const ajukanLayanan = (layanan) => {
   router.push({
     path: '/pengajuan-layanan',
@@ -323,7 +414,9 @@ const ajukanLayanan = (layanan) => {
   })
 }
 
-// Load data
+// ============================================
+// LOAD DATA
+// ============================================
 await loadLayanan()
 </script>
 
@@ -336,7 +429,6 @@ await loadLayanan()
   animation: spin 0.8s linear infinite;
 }
 
-/* Memperhalus truncating teks jika panjang */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

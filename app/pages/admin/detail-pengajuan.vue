@@ -1,296 +1,476 @@
 <template>
-  <div>
+  <div class="bg-slate-50 min-h-screen pb-24 font-['Poppins']">
     <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-      <NuxtLink to="/admin/pengajuan" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600 transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-      </NuxtLink>
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">Detail Pengajuan</h1>
-        <p class="text-sm text-gray-500">Lihat dan kelola pengajuan layanan warga</p>
+    <section class="bg-slate-900 text-white pt-32 pb-16 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-emerald-900 to-slate-900 opacity-90"></div>
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="flex items-center gap-4 mb-4">
+          <NuxtLink to="/layanan" class="text-white/70 hover:text-white transition-colors flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Kembali
+          </NuxtLink>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">
+          {{ layananNama }}
+        </h1>
+        <p class="text-slate-300 text-lg max-w-2xl">
+          Isi formulir pengajuan dengan data yang benar dan lengkap
+        </p>
       </div>
-    </div>
+    </section>
 
-    <!-- Loading -->
-    <div v-if="pending" class="flex justify-center py-12">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-600/30 border-t-emerald-600"></div>
-    </div>
-
-    <!-- Detail -->
-    <div v-else-if="pengajuan" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Informasi Pengajuan -->
-      <div class="lg:col-span-2 space-y-6">
-        <!-- Status Card -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500">Nomor Pengajuan</p>
-              <p class="text-xl font-bold text-gray-900 font-mono">{{ pengajuan.nomor_pengajuan }}</p>
-            </div>
-            <span :class="statusClass(pengajuan.status)" class="px-4 py-2 text-sm font-semibold rounded-full">
-              {{ statusLabel(pengajuan.status) }}
-            </span>
+    <!-- Form -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8 lg:p-10">
+        
+        <!-- Success State -->
+        <div v-if="success" class="text-center py-8">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-4">
+            <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
           </div>
-          <div class="mt-4 flex items-center gap-3 text-sm text-gray-500">
-            <span>📅 {{ formatDate(pengajuan.created_at) }}</span>
-            <span>•</span>
-            <span>📋 {{ pengajuan.layanan_nama }}</span>
-          </div>
-        </div>
-
-        <!-- Data Pemohon -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 class="font-bold text-gray-900 mb-4">Data Pemohon</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div><span class="text-gray-500">Nama Lengkap</span><br><span class="font-medium">{{ pengajuan.nama_lengkap }}</span></div>
-            <div><span class="text-gray-500">NIK</span><br><span class="font-medium">{{ pengajuan.nik }}</span></div>
-            <div><span class="text-gray-500">Tempat, Tanggal Lahir</span><br><span class="font-medium">{{ pengajuan.tempat_lahir || '-' }}, {{ pengajuan.tanggal_lahir || '-' }}</span></div>
-            <div><span class="text-gray-500">Jenis Kelamin</span><br><span class="font-medium">{{ pengajuan.jenis_kelamin || '-' }}</span></div>
-            <div><span class="text-gray-500">Pekerjaan</span><br><span class="font-medium">{{ pengajuan.pekerjaan || '-' }}</span></div>
-            <div><span class="text-gray-500">No HP / WA</span><br><span class="font-medium">{{ pengajuan.no_hp }}</span></div>
-            <div class="md:col-span-2"><span class="text-gray-500">Email</span><br><span class="font-medium">{{ pengajuan.email || '-' }}</span></div>
-            <div class="md:col-span-2"><span class="text-gray-500">Alamat</span><br><span class="font-medium">{{ pengajuan.alamat }}</span></div>
-            <div><span class="text-gray-500">RT</span><br><span class="font-medium">{{ pengajuan.rt || '-' }}</span></div>
-            <div><span class="text-gray-500">RW</span><br><span class="font-medium">{{ pengajuan.rw || '-' }}</span></div>
-          </div>
-        </div>
-
-        <!-- Data Pengajuan -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 class="font-bold text-gray-900 mb-4">Data Pengajuan</h3>
-          <div class="space-y-4 text-sm">
-            <div>
-              <span class="text-gray-500">Keperluan</span>
-              <p class="mt-1 text-gray-700">{{ pengajuan.keperluan || '-' }}</p>
-            </div>
-            <div>
-              <span class="text-gray-500">Catatan</span>
-              <p class="mt-1 text-gray-700">{{ pengajuan.catatan || '-' }}</p>
-            </div>
-            <div>
-              <span class="text-gray-500">Dokumen Pendukung</span>
-              <div v-if="pengajuan.lampiran && pengajuan.lampiran.length > 0" class="mt-2 flex flex-wrap gap-2">
-                <a 
-                  v-for="(doc, index) in pengajuan.lampiran" 
-                  :key="index"
-                  :href="doc" 
-                  target="_blank"
-                  class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-sm hover:bg-emerald-100 transition"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  Dokumen {{ index + 1 }}
-                </a>
-              </div>
-              <p v-else class="text-gray-400">Tidak ada dokumen</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar - Action -->
-      <div class="space-y-6">
-        <!-- Update Status -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-6">
-          <h3 class="font-bold text-gray-900 mb-4">Update Status</h3>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Pengajuan Berhasil!</h2>
+          <p class="text-gray-600 mb-2">Nomor Pengajuan: <strong class="text-emerald-600">{{ nomorPengajuan }}</strong></p>
+          <p class="text-gray-500 text-sm mb-6">Silakan simpan nomor pengajuan untuk melacak status</p>
           
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Status Pengajuan</label>
-              <select 
-                v-model="statusBaru" 
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
-              >
-                <option value="menunggu">⏳ Menunggu</option>
-                <option value="diproses">🔄 Diproses</option>
-                <option value="selesai">✅ Selesai</option>
-                <option value="ditolak">❌ Ditolak</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Admin</label>
-              <textarea 
-                v-model="catatanAdmin" 
-                rows="3"
-                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                placeholder="Tambahkan catatan untuk pemohon..."
-              ></textarea>
-            </div>
-
-            <button 
-              @click="updateStatus" 
-              :disabled="loading"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+          <!-- Link Tracking -->
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 max-w-md mx-auto">
+            <p class="text-sm text-blue-700">
+              💡 <strong>Pantau status pengajuan Anda:</strong>
+            </p>
+            <NuxtLink 
+              :to="`/tracking?nomor=${nomorPengajuan}`" 
+              class="text-blue-600 font-medium hover:underline inline-flex items-center gap-1 mt-1"
             >
-              <span v-if="loading" class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-              Update Status
-            </button>
-
-            <button 
-              v-if="pengajuan.status === 'selesai'"
-              @click="printPengajuan" 
-              class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+              Klik di sini untuk cek status →
+            </NuxtLink>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <NuxtLink to="/layanan" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium transition">
+              Kembali ke Layanan
+            </NuxtLink>
+            <NuxtLink 
+              :to="`/tracking?nomor=${nomorPengajuan}`" 
+              class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-              </svg>
-              Cetak Surat
-            </button>
+              🔍 Cek Status
+            </NuxtLink>
           </div>
         </div>
 
-        <!-- Timeline -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <h3 class="font-bold text-gray-900 mb-4">Timeline</h3>
-          <div class="space-y-4 text-sm">
+        <!-- Form -->
+        <form v-else @submit.prevent="submitPengajuan" class="space-y-6">
+          <!-- Progress Bar -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-2 text-sm">
+              <span class="font-medium text-gray-700">Progress</span>
+              <span class="text-emerald-600 font-medium">{{ progress }}%</span>
+            </div>
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                class="h-full bg-emerald-600 rounded-full transition-all duration-500"
+                :style="{ width: progress + '%' }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Informasi Layanan -->
+          <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
             <div class="flex items-start gap-3">
-              <div class="w-2 h-2 mt-2 rounded-full bg-emerald-500"></div>
-              <div>
-                <p class="text-gray-700">Pengajuan dibuat</p>
-                <p class="text-xs text-gray-400">{{ formatDate(pengajuan.created_at) }}</p>
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
               </div>
-            </div>
-            <div v-if="pengajuan.processed_at" class="flex items-start gap-3">
-              <div class="w-2 h-2 mt-2 rounded-full bg-blue-500"></div>
               <div>
-                <p class="text-gray-700">Mulai diproses</p>
-                <p class="text-xs text-gray-400">{{ formatDate(pengajuan.processed_at) }}</p>
-              </div>
-            </div>
-            <div v-if="pengajuan.completed_at" class="flex items-start gap-3">
-              <div class="w-2 h-2 mt-2 rounded-full bg-emerald-500"></div>
-              <div>
-                <p class="text-gray-700">Selesai</p>
-                <p class="text-xs text-gray-400">{{ formatDate(pengajuan.completed_at) }}</p>
-              </div>
-            </div>
-            <div v-if="pengajuan.rejected_at" class="flex items-start gap-3">
-              <div class="w-2 h-2 mt-2 rounded-full bg-red-500"></div>
-              <div>
-                <p class="text-gray-700">Ditolak</p>
-                <p class="text-xs text-gray-400">{{ formatDate(pengajuan.rejected_at) }}</p>
+                <p class="text-sm font-semibold text-gray-900">{{ layananNama }}</p>
+                <p class="text-xs text-gray-600 mt-0.5">Jenis layanan yang Anda pilih</p>
               </div>
             </div>
           </div>
-        </div>
+
+          <!-- Data Diri -->
+          <div class="border-b border-gray-200 pb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Data Diri</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                <input 
+                  v-model="form.nama_lengkap" 
+                  type="text" 
+                  required
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Nama lengkap sesuai KTP"
+                >
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">NIK <span class="text-red-500">*</span></label>
+                <input 
+                  v-model="form.nik" 
+                  type="text" 
+                  required
+                  maxlength="16"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="16 digit NIK"
+                >
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir</label>
+                <input 
+                  v-model="form.tempat_lahir" 
+                  type="text" 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Kota tempat lahir"
+                >
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+                <input 
+                  v-model="form.tanggal_lahir" 
+                  type="date" 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                >
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+                <select 
+                  v-model="form.jenis_kelamin" 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+                >
+                  <option value="">Pilih...</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan</label>
+                <input 
+                  v-model="form.pekerjaan" 
+                  type="text" 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Pekerjaan saat ini"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Alamat -->
+          <div class="border-b border-gray-200 pb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Alamat</h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap <span class="text-red-500">*</span></label>
+                <textarea 
+                  v-model="form.alamat" 
+                  required
+                  rows="2"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Alamat lengkap sesuai KTP"
+                ></textarea>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">RT</label>
+                  <input 
+                    v-model="form.rt" 
+                    type="text" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                    placeholder="RT"
+                  >
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">RW</label>
+                  <input 
+                    v-model="form.rw" 
+                    type="text" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                    placeholder="RW"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kontak -->
+          <div class="border-b border-gray-200 pb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Kontak</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nomor HP / WA <span class="text-red-500">*</span></label>
+                <input 
+                  v-model="form.no_hp" 
+                  type="tel" 
+                  required
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="08xx-xxxx-xxxx"
+                >
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input 
+                  v-model="form.email" 
+                  type="email" 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="email@example.com"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Pengajuan -->
+          <div class="border-b border-gray-200 pb-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Data Pengajuan</h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan</label>
+                <textarea 
+                  v-model="form.keperluan" 
+                  rows="3"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Jelaskan keperluan pengajuan Anda"
+                ></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Tambahan</label>
+                <textarea 
+                  v-model="form.catatan" 
+                  rows="2"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  placeholder="Catatan tambahan (opsional)"
+                ></textarea>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Dokumen Pendukung</label>
+                <div class="flex items-center justify-center w-full">
+                  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                      </svg>
+                      <p class="mb-2 text-sm text-gray-500 font-semibold">Klik untuk upload dokumen</p>
+                      <p class="text-xs text-gray-400">PDF, JPG, PNG (Maks. 5MB)</p>
+                    </div>
+                    <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" class="hidden" @change="handleFileUpload" />
+                  </label>
+                </div>
+                <div v-if="uploadedFiles.length > 0" class="mt-3">
+                  <p class="text-sm text-gray-600 font-medium">Dokumen terupload:</p>
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <span 
+                      v-for="(file, index) in uploadedFiles" 
+                      :key="index"
+                      class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm"
+                    >
+                      📄 {{ file.name }}
+                      <button type="button" @click="removeFile(index)" class="text-red-500 hover:text-red-700">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tombol Submit -->
+          <div class="flex gap-3 pt-4">
+            <NuxtLink to="/layanan" class="flex-1 px-4 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all text-center">
+              Batal
+            </NuxtLink>
+            <button 
+              type="submit" 
+              :disabled="loading"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all disabled:opacity-70 flex justify-center items-center gap-2"
+            >
+              <span v-if="loading" class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+              {{ loading ? 'Memproses...' : 'Ajukan Sekarang' }}
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-definePageMeta({ layout: 'admin' })
-
 const supabase = useSupabaseClient()
 const route = useRoute()
 const router = useRouter()
-const user = useSupabaseUser()
 
-if (!user.value) {
-  navigateTo('/login')
+// Import utility WA
+import { generateWALink, getStatusMessage } from '~/utils/waNotification'
+
+// Ambil parameter dari URL
+const layananId = route.query.layanan_id
+const layananNama = route.query.layanan || 'Layanan'
+
+// State
+const loading = ref(false)
+const success = ref(false)
+const nomorPengajuan = ref('')
+const uploadedFiles = ref([])
+const progress = ref(0)
+
+// Form data
+const form = ref({
+  layanan_id: parseInt(layananId) || null,
+  layanan_nama: layananNama,
+  nama_lengkap: '',
+  nik: '',
+  tempat_lahir: '',
+  tanggal_lahir: '',
+  jenis_kelamin: '',
+  pekerjaan: '',
+  alamat: '',
+  rt: '',
+  rw: '',
+  no_hp: '',
+  email: '',
+  keperluan: '',
+  catatan: '',
+  lampiran: []
+})
+
+// Handle file upload
+const handleFileUpload = (event) => {
+  const files = event.target.files
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i]
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`File ${file.name} terlalu besar! Maksimal 5MB.`)
+      continue
+    }
+    uploadedFiles.value.push(file)
+  }
+  event.target.value = ''
 }
 
-const pengajuanId = route.query.id
-const pending = ref(true)
-const loading = ref(false)
-const pengajuan = ref(null)
-const statusBaru = ref('')
-const catatanAdmin = ref('')
+// Remove file
+const removeFile = (index) => {
+  uploadedFiles.value.splice(index, 1)
+}
 
-// Load detail pengajuan
-const loadDetail = async () => {
-  if (!pengajuanId) {
-    router.push('/admin/pengajuan')
+// Submit pengajuan
+const submitPengajuan = async () => {
+  // Validasi
+  if (!form.value.nama_lengkap || !form.value.nik || !form.value.alamat || !form.value.no_hp) {
+    alert('Mohon lengkapi data yang wajib diisi!')
     return
   }
 
-  const { data, error } = await supabase
-    .from('pengajuan')
-    .select('*')
-    .eq('id', pengajuanId)
-    .single()
-
-  if (!error && data) {
-    pengajuan.value = data
-    statusBaru.value = data.status
-    catatanAdmin.value = data.catatan_admin || ''
-  }
-  pending.value = false
-}
-
-await loadDetail()
-
-// Update status
-const updateStatus = async () => {
   loading.value = true
-
-  const updateData = {
-    status: statusBaru.value,
-    catatan_admin: catatanAdmin.value
-  }
-
-  if (statusBaru.value === 'diproses') {
-    updateData.processed_at = new Date().toISOString()
-  } else if (statusBaru.value === 'selesai') {
-    updateData.completed_at = new Date().toISOString()
-  } else if (statusBaru.value === 'ditolak') {
-    updateData.rejected_at = new Date().toISOString()
-  }
+  progress.value = 30
 
   try {
-    const { error } = await supabase
+    // Upload files jika ada
+    const fileUrls = []
+    for (const file of uploadedFiles.value) {
+      progress.value = 50
+      const fileExt = file.name.split('.').pop()
+      const fileName = `pengajuan/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('pengajuan-dokumen')
+        .upload(fileName, file)
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage
+        .from('pengajuan-dokumen')
+        .getPublicUrl(fileName)
+
+      fileUrls.push(urlData.publicUrl)
+    }
+
+    progress.value = 70
+
+    // Simpan ke database
+    const { data, error } = await supabase
       .from('pengajuan')
-      .update(updateData)
-      .eq('id', pengajuanId)
+      .insert([
+        {
+          ...form.value,
+          lampiran: fileUrls
+        }
+      ])
+      .select()
+      .single()
 
     if (error) throw error
 
-    alert('✅ Status berhasil diperbarui!')
-    await loadDetail()
+    progress.value = 100
+    nomorPengajuan.value = data.nomor_pengajuan
+
+    // Kirim notifikasi WA (buka WhatsApp otomatis)
+    if (data && data.no_hp) {
+      try {
+        const pesan = getStatusMessage(
+          data.nama_lengkap,
+          data.layanan_nama,
+          'menunggu',
+          data.nomor_pengajuan
+        )
+        
+        const waLink = generateWALink(data.no_hp, pesan)
+        // Buka WhatsApp di tab baru (tapi tidak mengganggu user)
+        window.open(waLink, '_blank')
+        console.log('✅ WhatsApp dibuka untuk:', data.nama_lengkap)
+      } catch (waError) {
+        console.error('Error opening WhatsApp:', waError)
+        // Tidak masalah jika WA gagal, pengajuan tetap berhasil
+      }
+    }
+
+    success.value = true
+
   } catch (error) {
-    alert('❌ Gagal update status: ' + error.message)
+    console.error('Error:', error)
+    alert('❌ Gagal mengirim pengajuan: ' + error.message)
   } finally {
     loading.value = false
   }
 }
 
-// Status helper
-const statusClass = (status) => {
-  const classes = {
-    menunggu: 'bg-amber-100 text-amber-700',
-    diproses: 'bg-blue-100 text-blue-700',
-    selesai: 'bg-emerald-100 text-emerald-700',
-    ditolak: 'bg-red-100 text-red-700'
-  }
-  return classes[status] || classes.menunggu
-}
-
-const statusLabel = (status) => {
-  const labels = {
-    menunggu: '⏳ Menunggu',
-    diproses: '🔄 Diproses',
-    selesai: '✅ Selesai',
-    ditolak: '❌ Ditolak'
-  }
-  return labels[status] || status
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Intl.DateTimeFormat('id-ID', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(new Date(dateString))
-}
-
+// Print / Save PDF
 const printPengajuan = () => {
   window.print()
 }
+
+// Cek login untuk redirect
+const user = useSupabaseUser()
 </script>
+
+<style scoped>
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+</style>
