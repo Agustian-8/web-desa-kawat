@@ -250,7 +250,7 @@ const shareWA = () => {
     `Status: ${statusLabel(status)}%0A%0A` +
     `Terima kasih.`
   
-  window.open(`https://wa.me/6281234567890?text=${pesan}`, '_blank')
+  window.open(`https://wa.me/6282252444924?text=${pesan}`, '_blank')
 }
 
 // Print
