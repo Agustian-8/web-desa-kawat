@@ -1,10 +1,11 @@
 <template>
   <div class="min-h-screen bg-slate-100 flex font-['Poppins']">
-    <!-- Sidebar Admin -->
+    <!-- Sidebar -->
     <AdminSidebar />
     
     <!-- Main Content -->
-    <main class="flex-grow p-6 md:p-10 ml-0 md:ml-64">
+    <!-- TAMBAHAN: pt-24 (khusus HP) agar konten tidak tertutup header mobile -->
+    <main class="flex-grow p-6 pt-24 md:pt-10 md:p-10 ml-0 md:ml-[260px]">
       <slot />
     </main>
   </div>
@@ -13,12 +14,11 @@
 <script setup>
 import AdminSidebar from '~/components/AdminSidebar.vue'
 
-// ✅ PROTEKSI KHUSUS UNTUK HALAMAN ADMIN
+// Proteksi semua halaman admin
 const user = useSupabaseUser()
 const router = useRouter()
 
 onMounted(() => {
-  // Jika user tidak login, redirect ke halaman login
   if (!user.value) {
     router.push('/login')
   }
