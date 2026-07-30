@@ -38,7 +38,8 @@ export const getStatusMessage = (
   nomorPengajuan: string,
   catatan?: string
 ): string => {
-  const baseUrl = process.env.NUXT_PUBLIC_BASE_URL || 'https://web-desa.vercel.app'
+  // ✅ PERBAIKAN: Link hanya sampai /tracking (tanpa parameter)
+  const baseUrl = 'https://web-desa.vercel.app/tracking'
   
   const messages: Record<string, string> = {
     'menunggu': `Halo ${nama} 🙏
@@ -51,7 +52,7 @@ Pengajuan Anda untuk *${layanan}* telah kami terima.
 Status: ⏳ Menunggu diproses
 
 Kami akan segera memproses pengajuan Anda. Silakan cek status secara berkala di:
-${baseUrl}/tracking?nomor=${nomorPengajuan}
+🔗 ${baseUrl}
 
 Terima kasih.`,
 
@@ -65,7 +66,7 @@ Status: 🔄 Sedang Diproses
 
 Mohon tunggu, kami akan segera menyelesaikan pengajuan Anda.
 
-Cek status: ${baseUrl}/tracking?nomor=${nomorPengajuan}
+Cek status: 🔗 ${baseUrl}
 
 Terima kasih.`,
 
@@ -81,7 +82,7 @@ Silakan datang ke Balai Desa untuk mengambil surat/dokumen dengan membawa KTP.
 
 Jam Pelayanan: Senin-Jumat, 08:00-15:00 WIB
 
-Cek status: ${baseUrl}/tracking?nomor=${nomorPengajuan}
+Cek status: 🔗 ${baseUrl}
 
 Terima kasih.`,
 
@@ -98,7 +99,7 @@ ${catatan || 'Silakan hubungi admin desa untuk informasi lebih lanjut.'}
 
 Silakan perbaiki data dan ajukan kembali jika diperlukan.
 
-Cek status: ${baseUrl}/tracking?nomor=${nomorPengajuan}
+Cek status: 🔗 ${baseUrl}
 
 Terima kasih.`
   }

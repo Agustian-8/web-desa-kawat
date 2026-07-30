@@ -115,7 +115,7 @@
 
       <!-- Info -->
       <div class="mt-6 text-center text-sm text-gray-400">
-        <p>Butuh bantuan? Hubungi admin desa</p>
+        <p>Butuh bantuan? Hubungi admin desa.</p>
       </div>
     </div>
   </div>
@@ -250,7 +250,7 @@ const shareWA = () => {
     `Status: ${statusLabel(status)}%0A%0A` +
     `Terima kasih.`
   
-  window.open(`https://wa.me/6282252444924?text=${pesan}`, '_blank')
+  window.open(`https://wa.me/6289514215508?text=${pesan}`, '_blank')
 }
 
 // Print
