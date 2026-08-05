@@ -83,9 +83,9 @@
             </li>
           </ul>
 
-          <!-- Button Action -->
+          <!-- Button Action (Memicu Modal) -->
           <button 
-            @click="ajukanLayanan(layanan)" 
+            @click="openModal(layanan)" 
             class="w-full py-3 px-4 font-semibold rounded-xl transition-all duration-300 border flex justify-center items-center gap-2"
             :class="getButtonClass(index)"
           >
@@ -219,6 +219,72 @@
         </div>
       </div>
     </section>
+
+    <!-- ============================================ -->
+    <!-- MODAL PILIH JENIS SURAT (INTERAKTIF)         -->
+    <!-- ============================================ -->
+    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
+      
+      <div 
+        v-motion
+        :initial="{ opacity: 0, scale: 0.95, y: 20 }"
+        :enter="{ opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } }"
+        class="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden flex flex-col max-h-[90vh]"
+      >
+        <!-- Modal Header -->
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-slate-50">
+          <div>
+            <h3 class="text-lg font-bold text-gray-900">Pilih Jenis Surat</h3>
+            <p class="text-sm text-gray-500">{{ selectedLayanan?.nama }}</p>
+          </div>
+          <button @click="closeModal" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Modal Body (Radio List) -->
+        <div class="p-6 overflow-y-auto">
+          <p class="text-sm text-gray-600 mb-4">Silakan pilih spesifik dokumen atau surat yang ingin Anda urus:</p>
+          <div class="space-y-3">
+            <label 
+              v-for="(item, idx) in selectedLayanan?.items" 
+              :key="idx"
+              class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200"
+              :class="selectedJenis === item ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500 shadow-sm' : 'border-gray-200 hover:border-emerald-300 hover:bg-slate-50'"
+            >
+              <input type="radio" :value="item" v-model="selectedJenis" class="hidden" />
+              <div class="flex-1">
+                <span class="block text-sm font-semibold" :class="selectedJenis === item ? 'text-emerald-900' : 'text-gray-900'">{{ item }}</span>
+              </div>
+              <div 
+                class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ml-3"
+                :class="selectedJenis === item ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'"
+              >
+                <svg v-if="selectedJenis === item" class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-6 border-t border-gray-100 bg-slate-50 flex gap-3">
+          <button @click="closeModal" class="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors">
+            Batal
+          </button>
+          <button 
+            @click="lanjutkanPengajuan" 
+            :disabled="!selectedJenis"
+            class="flex-1 px-4 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            Lanjut Isi Form
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
     
   </div>
 </template>
@@ -234,8 +300,13 @@ const pending = ref(true)
 const layananList = ref([])
 const trackingNomor = ref('')
 
+// STATE MODAL
+const showModal = ref(false)
+const selectedLayanan = ref(null)
+const selectedJenis = ref('')
+
 // ============================================
-// STEPS DATA
+// STEPS DATA (Untuk Bagian Cara Kerja)
 // ============================================
 const steps = [
   { title: "Pilih Layanan", desc: "Temukan jenis surat atau dokumen yang ingin Anda urus dari daftar layanan di atas." },
@@ -245,76 +316,56 @@ const steps = [
 ]
 
 // ============================================
-// ESTETIKA WARNA
+// MODAL LOGIC
+// ============================================
+const openModal = (layanan) => {
+  selectedLayanan.value = layanan
+  // Default pilih item pertama agar lebih user-friendly
+  selectedJenis.value = layanan.items.length > 0 ? layanan.items[0] : ''
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  // Beri jeda animasi sebelum menghapus data
+  setTimeout(() => {
+    selectedLayanan.value = null
+    selectedJenis.value = ''
+  }, 300)
+}
+
+const lanjutkanPengajuan = () => {
+  if (!selectedJenis.value) return
+  
+  router.push({
+    path: '/pengajuan-layanan',
+    query: {
+      layanan_id: selectedLayanan.value.id,
+      layanan: selectedLayanan.value.nama,
+      jenis: selectedJenis.value // MENGIRIM JENIS SURAT KE FORM
+    }
+  })
+  
+  closeModal()
+}
+
+// ============================================
+// ESTETIKA WARNA & LAINNYA
 // ============================================
 const colorMap = {
-  blue: {
-    bg: 'hover:border-blue-200',
-    iconBg: 'bg-blue-50 text-blue-600',
-    iconColor: '',
-    dot: 'bg-blue-500',
-    button: 'bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-600 hover:text-white hover:border-blue-600'
-  },
-  emerald: {
-    bg: 'hover:border-emerald-200',
-    iconBg: 'bg-emerald-50 text-emerald-600',
-    iconColor: '',
-    dot: 'bg-emerald-500',
-    button: 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-600 hover:text-white hover:border-emerald-600'
-  },
-  amber: {
-    bg: 'hover:border-amber-200',
-    iconBg: 'bg-amber-50 text-amber-600',
-    iconColor: '',
-    dot: 'bg-amber-500',
-    button: 'bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-500 hover:text-white hover:border-amber-500'
-  },
-  rose: {
-    bg: 'hover:border-rose-200',
-    iconBg: 'bg-rose-50 text-rose-600',
-    iconColor: '',
-    dot: 'bg-rose-500',
-    button: 'bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-600 hover:text-white hover:border-rose-600'
-  },
-  purple: {
-    bg: 'hover:border-purple-200',
-    iconBg: 'bg-purple-50 text-purple-600',
-    iconColor: '',
-    dot: 'bg-purple-500',
-    button: 'bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-600 hover:text-white hover:border-purple-600'
-  },
-  teal: {
-    bg: 'hover:border-teal-200',
-    iconBg: 'bg-teal-50 text-teal-600',
-    iconColor: '',
-    dot: 'bg-teal-500',
-    button: 'bg-teal-50 text-teal-700 border-teal-100 hover:bg-teal-600 hover:text-white hover:border-teal-600'
-  }
+  blue: { bg: 'hover:border-blue-200', iconBg: 'bg-blue-50 text-blue-600', dot: 'bg-blue-500', button: 'bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-600 hover:text-white hover:border-blue-600' },
+  emerald: { bg: 'hover:border-emerald-200', iconBg: 'bg-emerald-50 text-emerald-600', dot: 'bg-emerald-500', button: 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-600 hover:text-white hover:border-emerald-600' },
+  amber: { bg: 'hover:border-amber-200', iconBg: 'bg-amber-50 text-amber-600', dot: 'bg-amber-500', button: 'bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-500 hover:text-white hover:border-amber-500' },
+  rose: { bg: 'hover:border-rose-200', iconBg: 'bg-rose-50 text-rose-600', dot: 'bg-rose-500', button: 'bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-600 hover:text-white hover:border-rose-600' },
+  purple: { bg: 'hover:border-purple-200', iconBg: 'bg-purple-50 text-purple-600', dot: 'bg-purple-500', button: 'bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-600 hover:text-white hover:border-purple-600' },
+  teal: { bg: 'hover:border-teal-200', iconBg: 'bg-teal-50 text-teal-600', dot: 'bg-teal-500', button: 'bg-teal-50 text-teal-700 border-teal-100 hover:bg-teal-600 hover:text-white hover:border-teal-600' }
 }
 
-const getCardBg = (index) => {
-  const warna = layananList.value[index]?.warna || 'blue'
-  return colorMap[warna]?.bg || 'hover:border-gray-200'
-}
-
-const getIconBg = (index) => {
-  const warna = layananList.value[index]?.warna || 'blue'
-  return colorMap[warna]?.iconBg || 'bg-gray-50 text-gray-600'
-}
-
-const getIconColor = (index) => {
-  return ''
-}
-
-const getDotColor = (index) => {
-  const warna = layananList.value[index]?.warna || 'blue'
-  return colorMap[warna]?.dot || 'bg-gray-400'
-}
-
-const getButtonClass = (index) => {
-  const warna = layananList.value[index]?.warna || 'blue'
-  return colorMap[warna]?.button || 'bg-gray-50 text-gray-700 border-gray-100 hover:bg-gray-600 hover:text-white'
-}
+const getCardBg = (index) => colorMap[layananList.value[index]?.warna || 'blue']?.bg
+const getIconBg = (index) => colorMap[layananList.value[index]?.warna || 'blue']?.iconBg
+const getIconColor = (index) => ''
+const getDotColor = (index) => colorMap[layananList.value[index]?.warna || 'blue']?.dot
+const getButtonClass = (index) => colorMap[layananList.value[index]?.warna || 'blue']?.button
 
 // ============================================
 // FUNGSI KE TRACKING
@@ -333,106 +384,27 @@ const goToTracking = () => {
 const loadLayanan = async () => {
   pending.value = true
   try {
-    const { data, error } = await supabase
-      .from('layanan')
-      .select('*')
-      .order('id', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching layanan from Supabase:', error)
-      loadFromLocalStorage()
-      pending.value = false
-      return
-    }
-
+    const { data, error } = await supabase.from('layanan').select('*').order('id', { ascending: true })
+    if (error) throw error
     if (data && data.length > 0) {
       layananList.value = data
-      if (process.client) {
-        localStorage.setItem('layanan_desa', JSON.stringify(data))
-      }
-    } else {
-      loadFromLocalStorage()
+      if (process.client) localStorage.setItem('layanan_desa', JSON.stringify(data))
     }
   } catch (error) {
-    console.error('Error:', error)
-    loadFromLocalStorage()
+    if (process.client) {
+      const saved = localStorage.getItem('layanan_desa')
+      if (saved) layananList.value = JSON.parse(saved)
+    }
+  } finally {
+    pending.value = false
   }
-  pending.value = false
 }
 
-const loadFromLocalStorage = () => {
-  if (process.client) {
-    const saved = localStorage.getItem('layanan_desa')
-    if (saved) {
-      try {
-        layananList.value = JSON.parse(saved)
-        return
-      } catch (e) {
-        console.error('Gagal load layanan dari localStorage:', e)
-      }
-    }
-  }
-  setDefaultLayanan()
-}
-
-const setDefaultLayanan = () => {
-  layananList.value = [
-    {
-      id: 1,
-      nama: 'Administrasi Warga',
-      deskripsi: 'Layanan administrasi kependudukan untuk warga desa',
-      items: ['Pengantar KTP / KK', 'Pengantar Akta Kelahiran', 'Surat Keterangan Domisili'],
-      warna: 'blue',
-      icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-    },
-    {
-      id: 2,
-      nama: 'Perizinan & Usaha',
-      deskripsi: 'Layanan perizinan untuk usaha mikro dan kegiatan',
-      items: ['Surat Izin Usaha Mikro (IUMK)', 'Izin Keramaian', 'Keterangan Tidak Mampu (SKTM)'],
-      warna: 'amber',
-      icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'
-    },
-    {
-      id: 3,
-      nama: 'Pusat Pelaporan',
-      deskripsi: 'Laporan dan aduan masyarakat untuk perbaikan desa',
-      items: ['Lapor Fasilitas Rusak', 'Aduan Keamanan & Ketertiban', 'Kotak Saran Kepala Desa'],
-      warna: 'rose',
-      icon: 'M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z'
-    }
-  ]
-}
-
-const ajukanLayanan = (layanan) => {
-  router.push({
-    path: '/pengajuan-layanan',
-    query: {
-      layanan_id: layanan.id,
-      layanan: layanan.nama
-    }
-  })
-}
-
-// ============================================
-// LOAD DATA
-// ============================================
 await loadLayanan()
 </script>
 
 <style scoped>
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.animate-spin {
-  animation: spin 0.8s linear infinite;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
-  overflow: hidden;
-}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 0.8s linear infinite; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 </style>

@@ -19,7 +19,8 @@ export default defineNuxtConfig({
         '/berita',            
         '/berita-detail',     
         '/transparansi',      
-        '/pengajuan-layanan'  
+        '/pengajuan-layanan',
+        '/tracking'
       ],
     }
   },

@@ -12,9 +12,12 @@
             Kembali
           </NuxtLink>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-4">
+        <h1 class="text-3xl md:text-4xl font-bold mb-2">
           {{ layananNama }}
         </h1>
+        <p class="text-emerald-300 font-medium text-lg mb-4" v-if="jenisSurat">
+          Tipe Surat: {{ jenisSurat }}
+        </p>
         <p class="text-slate-300 text-lg max-w-2xl">
           Isi formulir pengajuan dengan data yang benar dan lengkap
         </p>
@@ -61,8 +64,8 @@
             </div>
           </div>
 
-          <!-- Informasi Layanan -->
-          <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
+          <!-- Informasi Layanan (Diperbarui) -->
+          <div class="bg-emerald-50 rounded-2xl p-4 border border-emerald-100 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
                 <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,8 +74,13 @@
               </div>
               <div>
                 <p class="text-sm font-semibold text-gray-900">{{ layananNama }}</p>
-                <p class="text-xs text-gray-600 mt-0.5">Jenis layanan yang Anda pilih</p>
+                <p class="text-xs text-gray-600 mt-0.5">Kategori Layanan</p>
               </div>
+            </div>
+            <!-- Badge Jenis Surat -->
+            <div v-if="jenisSurat" class="bg-white border border-emerald-200 px-4 py-2 rounded-xl shadow-sm">
+              <p class="text-sm font-bold text-emerald-700">{{ jenisSurat }}</p>
+              <p class="text-[10px] text-emerald-500 uppercase tracking-wider font-semibold">Dokumen yang diurus</p>
             </div>
           </div>
 
@@ -297,11 +305,11 @@
 <script setup>
 const supabase = useSupabaseClient()
 const route = useRoute()
-const router = useRouter()
 
 // Ambil parameter dari URL
 const layananId = route.query.layanan_id
 const layananNama = route.query.layanan || 'Layanan'
+const jenisSurat = route.query.jenis || ''
 
 // State
 const loading = ref(false)
@@ -325,7 +333,8 @@ const form = ref({
   rw: '',
   no_hp: '',
   email: '',
-  keperluan: '',
+  // Otomatis terisi teks keperluan dari URL parameter 'jenis'
+  keperluan: jenisSurat ? `Pengajuan pembuatan ${jenisSurat}` : '',
   catatan: '',
   lampiran: []
 })
@@ -351,7 +360,6 @@ const removeFile = (index) => {
 
 // Submit pengajuan
 const submitPengajuan = async () => {
-  // Validasi
   if (!form.value.nama_lengkap || !form.value.nik || !form.value.alamat || !form.value.no_hp) {
     alert('Mohon lengkapi data yang wajib diisi!')
     return
@@ -361,7 +369,6 @@ const submitPengajuan = async () => {
   progress.value = 30
 
   try {
-    // Upload files jika ada
     const fileUrls = []
     for (const file of uploadedFiles.value) {
       progress.value = 50
@@ -383,12 +390,16 @@ const submitPengajuan = async () => {
 
     progress.value = 70
 
-    // Simpan ke database
+    // Modifikasi nama layanan untuk disatukan agar jelas di database admin
+    // Contoh jadi: "Administrasi Warga - Pengantar KTP / KK"
+    const finalLayananNama = jenisSurat ? `${form.value.layanan_nama} - ${jenisSurat}` : form.value.layanan_nama
+
     const { data, error } = await supabase
       .from('pengajuan')
       .insert([
         {
           ...form.value,
+          layanan_nama: finalLayananNama, // Timpa dengan data gabungan
           lampiran: fileUrls
         }
       ])
@@ -413,23 +424,10 @@ const submitPengajuan = async () => {
 const printPengajuan = () => {
   window.print()
 }
-
-// Cek login untuk redirect
-const user = useSupabaseUser()
 </script>
 
 <style scoped>
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.animate-spin {
-  animation: spin 0.8s linear infinite;
-}
-
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 0.8s linear infinite; }
+@media print { .no-print { display: none !important; } }
 </style>

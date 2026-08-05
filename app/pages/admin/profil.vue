@@ -85,9 +85,9 @@
             v-model="misiText" 
             rows="4"
             class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-            placeholder="Tulis misi, pisahkan dengan koma (contoh: Misi 1, Misi 2, Misi 3)"
+            placeholder="Tulis misi, pisahkan dengan titik koma (contoh: Misi 1; Misi 2; Misi 3)"
           ></textarea>
-          <p class="text-xs text-gray-400 mt-1">Pisahkan setiap misi dengan tanda koma ( , )</p>
+          <p class="text-xs text-gray-400 mt-1">Pisahkan setiap misi dengan tanda titik koma ( ; )</p>
         </div>
 
         <!-- Tombol Submit -->
@@ -385,7 +385,7 @@ const loadProfil = async () => {
 
   if (!error && data) {
     profilForm.value = data
-    misiText.value = data.misi ? data.misi.join(', ') : ''
+    misiText.value = data.misi ? data.misi.join('; ') : ''
   }
 }
 
@@ -456,7 +456,8 @@ const uploadFoto = async (file) => {
 const updateProfil = async () => {
   loading.value = true
   
-  const misiArray = misiText.value.split(',').map(item => item.trim()).filter(item => item)
+  // Split misi menggunakan titik koma (;) bukan koma (,)
+  const misiArray = misiText.value.split(';').map(item => item.trim()).filter(item => item)
   
   const updateData = {
     nama_desa: profilForm.value.nama_desa,

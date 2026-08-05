@@ -185,11 +185,12 @@
               </div>
             </div>
 
-            <div class="flex gap-2.5 w-full sm:w-auto">
+            <div class="flex flex-wrap gap-2.5 w-full sm:w-auto lg:w-40">
               <!-- Tombol Detail -->
               <NuxtLink 
                 :to="`/admin/detail-pengajuan?id=${item.id}`"
-                class="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-blue-100 hover:border-blue-600"
+                class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-blue-100 hover:border-blue-600"
+                title="Lihat Detail"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                 Detail
@@ -198,14 +199,27 @@
               <!-- Tombol Kirim WA -->
               <button 
                 @click="bukaWA(item)"
-                class="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-[#25D366]/20"
+                class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm shadow-[#25D366]/20"
+                title="Kirim Pesan WhatsApp"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                 </svg>
-                WA
+                WhatsApp
               </button>
             </div>
+            
+            <!-- Tombol Hapus Penuh -->
+            <button 
+              @click="hapusPengajuan(item.id, item.nama_lengkap)"
+              class="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-xl text-sm font-semibold transition-colors border border-rose-100 hover:border-rose-600 mt-1"
+              title="Hapus Pengajuan"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Hapus
+            </button>
           </div>
           
         </div>
@@ -231,7 +245,7 @@ import { generateWALink, getStatusMessage } from '~/utils/waNotification'
 const loading = ref(true)
 const pengajuanList = ref([])
 const filterStatus = ref('semua')
-const searchQuery = ref('') // Tambahkan state untuk search
+const searchQuery = ref('') 
 
 const statusFilters = [
   { value: 'semua', label: 'Semua Data' },
@@ -245,12 +259,10 @@ const statusFilters = [
 const filteredPengajuan = computed(() => {
   let result = pengajuanList.value
   
-  // Filter by status
   if (filterStatus.value !== 'semua') {
     result = result.filter(p => p.status === filterStatus.value)
   }
   
-  // Filter by search query
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim()
     result = result.filter(p => {
@@ -300,12 +312,10 @@ const formatDate = (date) => {
 const getCountByStatus = (status) => {
   let result = pengajuanList.value
   
-  // Filter by status untuk counter
   if (status !== 'semua') {
     result = result.filter(p => p.status === status)
   }
   
-  // Filter by search query untuk counter
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim()
     result = result.filter(p => {
@@ -356,12 +366,12 @@ const updateStatus = async (id, newStatus, item) => {
 
     if (error) throw error
 
-    // Pembaruan visual instan di UI
     alert(`✅ Status pengajuan berhasil diperbarui menjadi: ${statusLabel(newStatus)}`)
-    await loadPengajuan() // Opsional: Boleh dihapus jika tidak ingin me-refresh seluruh data
   } catch (error) {
     console.error('Error updating status:', error)
     alert('❌ Gagal mengupdate status: ' + error.message)
+    // Revert status jika gagal
+    item.status = pengajuanList.value.find(p => p.id === id).status 
   }
 }
 
@@ -385,6 +395,32 @@ const saveCatatan = async (id, catatan, item) => {
   } catch (error) {
     console.error('Error saving catatan:', error)
     alert('❌ Gagal menyimpan catatan: ' + error.message)
+  }
+}
+
+// Hapus Pengajuan
+const hapusPengajuan = async (id, nama) => {
+  // 1. Munculkan peringatan konfirmasi terlebih dahulu
+  const isConfirm = window.confirm(`⚠️ PERINGATAN!\n\nApakah Anda yakin ingin menghapus data pengajuan atas nama "${nama}"?\n\nTindakan ini bersifat permanen dan data tidak dapat dikembalikan.`);
+  
+  if (!isConfirm) return; // Batalkan jika admin memilih 'Cancel'
+
+  try {
+    // 2. Eksekusi penghapusan di Supabase
+    const { error } = await supabase
+      .from('pengajuan')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    // 3. Update UI: Hapus item dari list lokal tanpa perlu muat ulang seluruh halaman
+    pengajuanList.value = pengajuanList.value.filter(item => item.id !== id);
+    
+    alert('✅ Pengajuan berhasil dihapus.');
+  } catch (error) {
+    console.error('Error deleting pengajuan:', error);
+    alert('❌ Gagal menghapus pengajuan: ' + error.message);
   }
 }
 
